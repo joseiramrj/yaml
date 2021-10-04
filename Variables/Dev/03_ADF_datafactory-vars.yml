@@ -4,7 +4,7 @@ variables:
 - name: paramfactoryName
   value: default
 - name: paramdataFactory_location
-  value: South Central US
+  value: Brazil South
 - name: paramsqlSecretName
   value: default
 - name: paramatsSecretName

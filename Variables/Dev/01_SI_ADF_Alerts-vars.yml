@@ -7,7 +7,7 @@ variables:
 - name: paramActionGroupShortName #12 characters maximum
   value: default
 - name: paramActionGroupEmail
-  value: default
+  value: joseiramrj@gmail.com
 
 #------Log Analytics Workspace -------
 - name: paramWorkspaceName

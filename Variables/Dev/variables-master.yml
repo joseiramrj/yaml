@@ -3,7 +3,7 @@ variables:
 - name: paramResourceGroupName
   value: default
 - name: paramResourceGroupLocation
-  value: South Central US
+  value: Brazil South
 - name: paramDiagnosticsRetention
   value: P90D
 - name: paramDeploymentVersion
@@ -11,15 +11,15 @@ variables:
 - name: paramDeploymentType
   value: Platform
 - name: paramSubscriptionId
-  value: default
+  value: f0860058-6547-42cb-94f7-8a3984f520de
 - name: paramTenantId
-  value: default
+  value: 9f7ac1b8-db84-4730-8125-46a9a65df1d0
 - name: paramEnterpriseAppObjectId
-  value: default
+  value: 649091c8-64bb-4706-b53f-ff719fc19e3f
 - name: paramSkuVersion
   value: S1
 - name: paramPublisherEmail
-  value: default
+  value: joseiramrj@gmail.com
 
 # Deployments Variables template:
   #Pipeline 1

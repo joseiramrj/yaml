@@ -2,10 +2,10 @@
 variables:
 #------Sorage Account------
 - name: paramStorageAccountNameats
-  value: default
+  value: sa-ingtfwk
 - name: paramStorageTierats
   value: Standard
 - name: paramStorageAccountLocationats
-  value: South Central US
+  value: Brazil South
 - name: paramStorageTypeats
   value: Standard_RAGRS

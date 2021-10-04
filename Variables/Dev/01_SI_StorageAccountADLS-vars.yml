@@ -2,10 +2,10 @@
 variables:
 #------Storage Account------
 - name: paramStorageAccountNameadls
-  value: default
+  value: sa-ingtfwk
 - name: paramStorageTieradls
   value: Standard
 - name: paramStorageAccountLocationadls
-  value: South Central US
+  value: Brazil South
 - name: paramStorageTypeadls
   value: Standard_RAGRS

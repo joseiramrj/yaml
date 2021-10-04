@@ -4,7 +4,7 @@ variables:
 - name: paramfunctionAppName
   value: default
 - name: paramdatafunctionApplocation
-  value: South Central US
+  value: Brazil South
 - name: paramhostingPlanName
   value: default
 - name: paramserverFarmResourceGroup

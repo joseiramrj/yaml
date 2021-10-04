@@ -10,7 +10,7 @@ variables:
 - name: paramSQLDbName
   value: default
 - name: paramSqlServerLocation
-  value: South Central US
+  value: Brazil South
 - name: paramSqlServerName
   value: default
 - name: paramSqlStorageAccountName
