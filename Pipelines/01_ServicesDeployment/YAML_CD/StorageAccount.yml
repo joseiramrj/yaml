@@ -1,0 +1,80 @@
+# Template to deploy an Azure Audit Storage Account
+parameters:
+- name: paramDeploymentMode  
+  displayName: 'Mode? Validation/Incremental'
+  type: string
+  default: Incremental
+- name: paramEnabled 
+  displayName: 'Enabled? true/false'  
+  type: boolean
+  default: true
+
+steps:
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment:Create Or Update Storage Account'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    resourceGroupName: '$(paramResourceGroupName)'
+    location: '$(paramResourceGroupLocation)'
+    ${{ if eq(parameters.paramDeploymentMode,'Validation') }}:
+      csmFile: MDMF/Deployment/ARMTemplates/ServicesDeployment/StorageAccount.json
+      csmParametersFile: MDMF/Deployment/ARMTemplates/ServicesDeployment/StorageAccount.param.dev.json
+    ${{ if eq(parameters.paramDeploymentMode,'Incremental') }}:
+      csmFile: $(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/StorageAccount.json
+      csmParametersFile: $(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/StorageAccount.param.dev.json
+    overrideParameters: '
+        -accountName "$(paramStorageAccountName)" 
+        -location "$(paramStorageAccountLocation)" 
+        -accountType "$(paramStorageType)" 
+        -accountTier "$(paramStorageTier)" 
+        -metricsRetention "$(paramDiagnosticsRetention)" 
+        -deploymentVersion "$(paramDeploymentVersion)" 
+        -deploymentType "$(paramDeploymentType)"'
+    deploymentMode: ${{ parameters.paramDeploymentMode }}
+  enabled: ${{ parameters.paramEnabled }}
+  condition: succeededOrFailed()
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment:Create Or Update Storage Account'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    resourceGroupName: '$(paramResourceGroupName)'
+    location: '$(paramResourceGroupLocation)'
+    ${{ if eq(parameters.paramDeploymentMode,'Validation') }}:
+      csmFile: MDMF/Deployment/ARMTemplates/ServicesDeployment/StorageAccount.json
+      csmParametersFile: MDMF/Deployment/ARMTemplates/ServicesDeployment/StorageAccount.param.dev.json
+    ${{ if eq(parameters.paramDeploymentMode,'Incremental') }}:
+      csmFile: $(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/StorageAccount.json
+      csmParametersFile: $(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/StorageAccount.param.dev.json
+    overrideParameters: '
+        -accountName "$(paramStorageAccountNameats)" 
+        -location "$(paramStorageAccountLocationats)" 
+        -accountType "$(paramStorageTypeats)" 
+        -accountTier "$(paramStorageTierats)" 
+        -metricsRetention "$(paramDiagnosticsRetention)" 
+        -deploymentVersion "$(paramDeploymentVersion)" 
+        -deploymentType "$(paramDeploymentType)"'
+    deploymentMode: ${{ parameters.paramDeploymentMode }}
+  enabled: ${{ parameters.paramEnabled }}
+  condition: succeededOrFailed()
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment:Create Or Update Storage Account'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    resourceGroupName: '$(paramResourceGroupName)'
+    location: '$(paramResourceGroupLocation)'
+    ${{ if eq(parameters.paramDeploymentMode,'Validation') }}:
+      csmFile: MDMF/Deployment/ARMTemplates/ServicesDeployment/StorageAccount_ADLS.json
+      csmParametersFile: MDMF/Deployment/ARMTemplates/ServicesDeployment/StorageAccount_ADLS.param.dev.json
+    ${{ if eq(parameters.paramDeploymentMode,'Incremental') }}:
+      csmFile: $(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/StorageAccount_ADLS.json
+      csmParametersFile: $(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/StorageAccount_ADLS.param.dev.json
+    overrideParameters: '
+        -accountName "$(paramStorageAccountNameadls)" 
+        -location "$(paramStorageAccountLocationadls)" 
+        -accountType "$(paramStorageTypeadls)" 
+        -accountTier "$(paramStorageTieradls)"'
+    deploymentMode: ${{ parameters.paramDeploymentMode }}
+  enabled: ${{ parameters.paramEnabled }}
+  condition: succeededOrFailed()

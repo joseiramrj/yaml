@@ -1,0 +1,23 @@
+# validation
+parameters:
+  name: validationEnabled 
+  type: boolean
+
+steps:
+# Data Factory
+- template: /MDMF/Deployment/YAML/Pipelines/03_ADF_Deployment/YAML_CD/DataFactory.yml
+  parameters:
+    paramDeploymentMode: Validation
+    paramEnabled: ${{ parameters.validationEnabled }}
+
+# Diagnostic Setting
+- template: /MDMF/Deployment/YAML/Pipelines/03_ADF_Deployment/YAML_CD/DataFactory_DiagnosticSetting.yml
+  parameters:
+    paramDeploymentMode: Validation
+    paramEnabled: ${{ parameters.validationEnabled }}
+
+# Schedule Query Rule
+- template: /MDMF/Deployment/YAML/Pipelines/03_ADF_Deployment/YAML_CD/DataFactory_ScheduledQueryRule.yml
+  parameters:
+    paramDeploymentMode: Validation
+    paramEnabled: ${{ parameters.validationEnabled }}

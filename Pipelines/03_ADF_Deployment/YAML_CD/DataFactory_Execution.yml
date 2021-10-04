@@ -1,0 +1,28 @@
+# Template to deploy an ADF Execution
+parameters:
+- name: paramDeploymentMode  
+  displayName: 'Mode? Validation/Incremental'
+  type: string
+  default: Incremental
+- name: paramEnabled 
+  displayName: 'Enabled? true/false'  
+  type: boolean
+  default: true
+
+steps:
+- task: AzureCLI@2
+  displayName: 'Azure CLI to execute Data Factory Pipeline'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    scriptType: ps
+    scriptLocation: inlineScript
+    inlineScript: |
+      az config set extension.use_dynamic_install=yes_without_prompt ;
+      az datafactory pipeline create-run --factory-name '$(paramfactoryName)' --name "PL_DataSupplyChainBus" --resource-group '$(paramResourceGroupName)' ;
+    deploymentMode: ${{ parameters.paramDeploymentMode }}
+  enabled: ${{ parameters.paramEnabled }}
+  condition: succeededOrFailed()
+
+- powershell: |
+   Start-Sleep -Seconds 180
+  displayName: 'Wait 3 minutes for log table creation (ADFActivityRun)'

@@ -1,0 +1,19 @@
+# Template to deploy an Azure Server and Sql Database
+parameters:
+- name: paramEnabled 
+  displayName: 'Enabled? true/false'  
+  type: boolean
+  default: true
+
+steps:
+- task: SqlAzureDacpacDeployment@1
+  displayName: 'Azure Deployment : Create SQL Database structure'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    ServerName: '$(paramSqlServerName).database.windows.net'
+    DatabaseName: '$(paramSQLDbName)'
+    SqlUsername: '$(paramSqlServerUserName)'
+    SqlPassword: '$(paramSqlServerPassword)'
+    DacpacFile: 'MDMF/Deployment/YAML/Pipelines/04_DB_Structure/DBDeployment/configingfrmdb.dacpac'
+  enabled: ${{ parameters.paramEnabled }}
+  condition: succeededOrFailed()

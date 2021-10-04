@@ -1,0 +1,6 @@
+# Master file for stage deployment
+steps:
+- template: FunctionApp.yml
+  parameters:
+    paramDeploymentMode: Incremental
+    paramEnabled: true

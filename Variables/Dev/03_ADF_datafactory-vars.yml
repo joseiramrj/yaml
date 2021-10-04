@@ -1,0 +1,13 @@
+# Template to declare the variables for the deployment templates
+variables:
+#------Azure DataFactory------
+- name: paramfactoryName
+  value: default
+- name: paramdataFactory_location
+  value: South Central US
+- name: paramsqlSecretName
+  value: default
+- name: paramatsSecretName
+  value: default
+- name: paramtriggerConfigSecretURL
+  value: default

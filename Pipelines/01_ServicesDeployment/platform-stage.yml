@@ -1,0 +1,38 @@
+#Template for staging 
+parameters:
+  - name: stageEnabled
+    type: boolean
+  - name: environmentShortName
+    type: string
+  - name: dependsOnStage
+    type: string
+  - name: agentPoolName
+    type: string
+
+
+stages:
+- stage: ${{ parameters.environmentShortName }}_Stage
+  displayName: ${{ parameters.environmentShortName }}_Stage
+  dependsOn: ${{ parameters.dependsOnStage }}
+  condition: ${{ parameters.stageEnabled }}  # this is use to execute/skip the stage
+  variables:
+    #- group: Platform-KeyVault-VG-${{ parameters.environmentShortName }}
+    - template: ../../../YAML/Variables/${{ parameters.environmentShortName }}/variables-master.yml
+
+  jobs:
+  - deployment: Deployment_${{ parameters.environmentShortName }}
+    displayName: Deployment ${{ parameters.environmentShortName }}
+    pool:
+      name: ${{ parameters.agentPoolName }}
+      vmImage: 'windows-latest'
+      demands:
+      - msbuild
+      - visualstudio
+      - vstest
+    environment: IngestionFramework-${{ parameters.environmentShortName }}
+    strategy: 
+      runOnce:
+        deploy:
+          steps: 
+          - checkout: 'YAML' 
+          - template: 'YAML_CD/master-deployment.yml'

@@ -1,0 +1,30 @@
+# Template to declare the variables for the deployment templates
+variables:
+
+#------Notification Action Group -------
+- name: paramActionGroupName
+  value: default
+- name: paramActionGroupShortName #12 characters maximum
+  value: default
+- name: paramActionGroupEmail
+  value: default
+
+#------Log Analytics Workspace -------
+- name: paramWorkspaceName
+  value: default
+- name: paramWorkspaceSku
+  value: pergb2018
+- name: paramWorkspaceLocation
+  value: southcentralus
+- name: paramWorkspaceRetentionInDays
+  value: 30
+
+#------Data Factory Diagnostic Setting -------
+- name: paramDiagnosticSettingName
+  value: default
+
+#------Data Factory Scheduled Query Rule -------
+- name: paramAlertName
+  value: default
+- name: paramAlertLocation
+  value: southcentralus

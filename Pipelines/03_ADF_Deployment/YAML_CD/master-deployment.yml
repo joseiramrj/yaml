@@ -1,0 +1,27 @@
+# Master file to setup the deployed resources
+
+steps:
+
+# ADF
+- template: DataFactory.yml
+  parameters:
+    paramDeploymentMode: Incremental
+    paramEnabled: true
+
+# Data Factory Diagnostic Setting
+- template: DataFactory_DiagnosticSetting.yml
+  parameters:
+    paramDeploymentMode: Incremental
+    paramEnabled: true
+
+# Data Factory Execution
+- template: DataFactory_Execution.yml
+  parameters:
+    paramDeploymentMode: Incremental
+    paramEnabled: true
+
+# Data Factory Scheduled Query Rule
+- template: DataFactory_ScheduledQueryRule.yml
+  parameters:
+    paramDeploymentMode: Incremental
+    paramEnabled: true

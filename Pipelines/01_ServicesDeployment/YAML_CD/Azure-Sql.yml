@@ -1,0 +1,56 @@
+# Template to deploy an Azure Server and Sql Database
+parameters:
+- name: paramDeploymentMode  
+  displayName: 'Mode? Validation/Incremental'
+  type: string
+  default: Incremental
+- name: paramEnabled 
+  displayName: 'Enabled? true/false'  
+  type: boolean
+  default: true
+
+steps:
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment:Create SQL Server'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    resourceGroupName: '$(paramResourceGroupName)'
+    location: '$(paramResourceGroupLocation)'
+    ${{ if eq(parameters.paramDeploymentMode,'Validation') }}:
+      csmFile: 'MDMF/Deployment/ARMTemplates/ServicesDeployment/AzureSQLServer.json'
+      csmParametersFile: 'MDMF/Deployment/ARMTemplates/ServicesDeployment/AzureSQLServer.param.dev.json'
+    ${{ if eq(parameters.paramDeploymentMode,'Incremental') }}:
+      csmFile: '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/AzureSQLServer.json'
+      csmParametersFile: '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/AzureSQLServer.param.dev.json'
+    overrideParameters: '-serverName "$(paramSqlServerName)" 
+                        -location "$(paramSqlServerLocation)" 
+                        -administratorLogin "$(paramSqlServerUserName)" 
+                        -administratorLoginPassword "$(paramSqlServerPassword)" 
+                        -storageAccountName "$(paramSqlStorageAccountName)" 
+                        -emailAddresses "$(paramPublisherEmail)" 
+                        -serverVersion "$(paramServerVersion)" 
+                        -storageType "$(paramStorageType)"'
+    deploymentMode: ${{ parameters.paramDeploymentMode }}
+  enabled: false
+  condition: succeededOrFailed()
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment : Create SQL server and SQL Database'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    resourceGroupName: '$(paramResourceGroupName)'
+    location: '$(paramResourceGroupLocation)'
+    ${{ if eq(parameters.paramDeploymentMode,'Validation') }}:
+      csmFile: 'MDMF/Deployment/ARMTemplates/ServicesDeployment/SQLDatabase.json'
+      csmParametersFile: 'MDMF/Deployment/ARMTemplates/ServicesDeployment/SQLDatabase.param.json'
+    ${{ if eq(parameters.paramDeploymentMode,'Incremental') }}:
+      csmFile: '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/SQLDatabase.json'
+      csmParametersFile: '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/SQLDatabase.param.json'
+    overrideParameters: '-serverName "$(paramSqlServerName)" 
+                        -sqlDBName "$(paramSQLDbName)" 
+                        -location "$(paramSqlServerLocation)" 
+                        -administratorLogin "$(paramSqlServerUserName)" 
+                        -administratorLoginPassword "$(paramSqlServerPassword)"'
+    deploymentMode: ${{ parameters.paramDeploymentMode }}
+  enabled: ${{ parameters.paramEnabled }}
+  condition: succeededOrFailed()

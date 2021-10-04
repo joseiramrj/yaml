@@ -1,0 +1,32 @@
+# Template to deploy an Data Factory Diagnostic Setting
+parameters:
+- name: paramDeploymentMode  
+  displayName: 'Mode? Validation/Incremental'
+  type: string
+  default: Incremental
+- name: paramEnabled 
+  displayName: 'Enabled? true/false'  
+  type: boolean
+  default: true
+
+steps:
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment:Create Or Update Data Factory Diagnostic Setting'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    resourceGroupName: '$(paramResourceGroupName)'
+    location: '$(paramResourceGroupLocation)'
+    ${{ if eq(parameters.paramDeploymentMode,'Validation') }}:
+      csmFile:  'MDMF/Deployment/ARMTemplates/ServicesDeployment/DataFactory_DiagnosticSetting.json'
+      csmParametersFile: 'MDMF/Deployment/ARMTemplates/ServicesDeployment/DataFactory_DiagnosticSetting.param.dev.json'
+    ${{ if eq(parameters.paramDeploymentMode,'Incremental') }}:
+      csmFile:  '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/DataFactory_DiagnosticSetting.json'
+      csmParametersFile: '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/DataFactory_DiagnosticSetting.param.dev.json'
+    overrideParameters: '
+        -factoryName "$(paramfactoryName)" 
+        -dataFactory_location "$(paramdataFactory_location)"
+        -workspaceId "/subscriptions/$(paramSubscriptionId)/resourceGroups/$(paramResourceGroupName)/providers/microsoft.operationalinsights/workspaces/$(paramWorkspaceName)" 
+        -diagnosticSettingName "$(paramDiagnosticSettingName)"' 
+    deploymentMode: ${{ parameters.paramDeploymentMode }}
+  enabled: ${{ parameters.paramEnabled }}
+  condition: succeededOrFailed()

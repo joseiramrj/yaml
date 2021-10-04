@@ -1,0 +1,30 @@
+# Master file for stage deployment
+steps:
+- template: StorageAccount.yml
+  parameters:
+    paramDeploymentMode: Incremental
+    paramEnabled: true
+
+# Azure KeyVault
+- template: AzureKeyVault.yml
+  parameters:
+    paramDeploymentMode: Incremental
+    paramEnabled: true
+
+# Azure SQL Server and Database
+- template: Azure-Sql.yml
+  parameters:
+    paramDeploymentMode: Incremental
+    paramEnabled: true
+
+# Notification Action Group
+- template: NotificationActionGroup.yml
+  parameters:
+    paramDeploymentMode: Incremental
+    paramEnabled: true 
+    
+# Log Analytics Workspace
+- template: LogAnalyticsWorkspace.yml
+  parameters:
+    paramDeploymentMode: Incremental
+    paramEnabled: true 

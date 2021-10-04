@@ -1,0 +1,60 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+resources:
+ repositories:
+   - repository: "YAML"
+     type: git
+     name: "default"
+     ref: 'default'
+
+variables:
+ - name: pathParam
+   value: '$(Pipeline.Workspace)\drop\'
+ - name: agentPoolNameParam
+   value: 'Azure Pipelines'
+
+stages:
+    
+###################################### VALIDATION & BUILD ###############################
+  - template: platform-validation-build.yml
+    parameters:
+      validationEnabled: true
+      buildEnabled: true
+      agentPoolName: ${{ variables.agentPoolNameParam }}
+
+#######################################  DEVELOPMENT  ###################################
+  - template: platform-stage.yml
+    parameters:
+      stageEnabled: true
+      environmentShortName: Dev  #Dev|Test|UAT|Prod
+      dependsOnStage: Build_stage
+      agentPoolName: ${{ variables.agentPoolNameParam }}
+
+#######################################  TEST  #########################################
+#   - template: platform-stage.yml
+#     parameters:
+#       stageEnabled: false
+#       environmentShortName: Test  #Dev|Test|UAT|Prod
+#       dependsOnStage: Dev_Stage
+#       agentPoolName: ${{ variables.agentPoolNameParam }}
+
+# #######################################  UAT  ##########################################
+#   - template: platform-stage.yml
+#     parameters:
+#       stageEnabled: false
+#       environmentShortName: UAT  #Dev|Test|UAT|Prod
+#       dependsOnStage: Test_Stage
+#       agentPoolName: ${{ variables.agentPoolNameParam }}
+
+# #######################################  Prod  #########################################
+#   - template: platform-stage.yml
+#     parameters:
+#       stageEnabled: false
+#       environmentShortName: Prod  #Dev|Test|UAT|Prod
+#       dependsOnStage: UAT_Stage
+#       agentPoolName: ${{ variables.agentPoolNameParam }}
+
+

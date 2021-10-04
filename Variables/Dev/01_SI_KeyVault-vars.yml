@@ -1,0 +1,10 @@
+# Template to declare the variables for the deployment templates
+variables:
+
+#------Azure KeyVault -------
+- name: paramAzureKVName
+  value: default
+- name: paramKeyVaultSku
+  value: Standard
+- name: paramKvAuditStorageAccountName
+  value: default

@@ -1,0 +1,62 @@
+# Template to deploy an ADF
+parameters:
+- name: paramDeploymentMode  
+  displayName: 'Mode? Validation/Incremental'
+  type: string
+  default: Incremental
+- name: paramEnabled 
+  displayName: 'Enabled? true/false'  
+  type: boolean
+  default: true
+
+steps:
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment:Create Or Update DataFactory Managed Identity'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    resourceGroupName: '$(paramResourceGroupName)'
+    location: '$(paramResourceGroupLocation)'
+    ${{ if eq(parameters.paramDeploymentMode,'Validation') }}:
+      csmFile:  'MDMF/Deployment/ARMTemplates/ServicesDeployment/DataFactory_ManagedIdentity.json'
+      csmParametersFile: 'MDMF/Deployment/ARMTemplates/ServicesDeployment/DataFactory_ManagedIdentity.param.dev.json'
+    ${{ if eq(parameters.paramDeploymentMode,'Incremental') }}:
+      csmFile:  '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/DataFactory_ManagedIdentity.json'
+      csmParametersFile: '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/DataFactory_ManagedIdentity.param.dev.json'
+    overrideParameters: '
+        -factoryName "$(paramfactoryName)" 
+        -dataFactory_location "$(paramdataFactory_location)"' 
+    deploymentMode: ${{ parameters.paramDeploymentMode }}
+  enabled: ${{ parameters.paramEnabled }}
+  condition: succeededOrFailed()
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment:Create Or Update DataFactory'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    resourceGroupName: '$(paramResourceGroupName)'
+    location: '$(paramResourceGroupLocation)'
+    ${{ if eq(parameters.paramDeploymentMode,'Validation') }}:
+      csmFile:  'MDMF/Deployment/ARMTemplates/ServicesDeployment/DataFactory.json'
+      csmParametersFile: 'MDMF/Deployment/ARMTemplates/ServicesDeployment/DataFactory.param.dev.json'
+    ${{ if eq(parameters.paramDeploymentMode,'Incremental') }}:
+      csmFile:  '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/DataFactory.json'
+      csmParametersFile: '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/DataFactory.param.dev.json'
+    overrideParameters: '
+        -factoryName "$(paramfactoryName)"
+        -LS_DF_Blob_ADLS2_properties_typeProperties_serviceEndpoint "https://$(paramStorageAccountNameadls).blob.core.windows.net/"
+        -LS_adls_sink_properties_typeProperties_url "https://$(paramStorageAccountNameadls).dfs.core.windows.net/"
+        -LS_atsdataquality_properties_typeProperties_connectionString_secretName "$(paramatsSecretName)"
+        -LS_blobcsv_properties_typeProperties_serviceEndpoint "https://$(paramStorageAccountName).blob.core.windows.net/"
+        -LS_keyvault_properties_typeProperties_baseUrl "https://$(paramAzureKVName).vault.azure.net/"
+        -LS_sqlconfiguration_properties_typeProperties_connectionString_secretName "$(paramsqlSecretName)"
+        -PrivEP-ATS_properties_privateLinkResourceId "/subscriptions/$(paramSubscriptionId)/resourceGroups/$(paramResourceGroupName)/providers/Microsoft.Storage/storageAccounts/$(paramStorageAccountNameats)"
+        -PrivEP-ATS_properties_fqdns ["$(paramStorageAccountNameats).table.core.windows.net"]
+        -PrivEP-AzSQLDB_properties_privateLinkResourceId "/subscriptions/$(paramSubscriptionId)/resourceGroups/$(paramResourceGroupName)/providers/Microsoft.Sql/servers/$(paramSqlServerName)"
+        -PrivEP-AzSQLDB_properties_fqdns ["$(paramSqlServerName).database.windows.net"]
+        -dataFactory_properties_globalParameters_SecretNameTriggerConfigurationData_value "$(paramtriggerConfigSecretURL)"
+        -dataFactory_properties_globalParameters_SinkGlobalParameters_value "{"kv_scope_name": "KeyVaultSecrets", "blob_secret_name": "", "storage_account_name": "", "sink_container_name": "sink", "schema_container_name": "schemas", "output_container_name": "datatransformation", "adls2_storage_account_name": "$(paramStorageAccountNameadls)", "adls2_blob_secret_name": "default", "sink_type": "ADLS"}"
+        -dataFactory_properties_globalParameters_FunctionAppURL_value "https://$(paramfunctionAppName).azurewebsites.net/api/TriggerCreation?"
+        -dataFactory_location "$(paramdataFactory_location)"'
+    deploymentMode: ${{ parameters.paramDeploymentMode }}
+  enabled: ${{ parameters.paramEnabled }}
+  condition: succeededOrFailed()

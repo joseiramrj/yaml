@@ -1,0 +1,19 @@
+# Template to declare the variables for the deployment templates
+variables:
+#------Azure SQL------
+- name: paramSqlServerUserName
+  value: default
+- name: paramSqlServerPassword
+  value: default
+- name: paramServerVersion
+  value: 12.0
+- name: paramSQLDbName
+  value: default
+- name: paramSqlServerLocation
+  value: South Central US
+- name: paramSqlServerName
+  value: default
+- name: paramSqlStorageAccountName
+  value: default
+- name: paramStorageType
+  value: Standard_RAGRS

@@ -1,0 +1,34 @@
+# Template to deploy an LogAnalyticsWorkspace
+parameters:
+- name: paramDeploymentMode  
+  displayName: 'Mode? Validation/Incremental'
+  type: string
+  default: Incremental
+- name: paramEnabled 
+  displayName: 'Enabled? true/false'  
+  type: boolean
+  default: true
+
+steps:
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment:Create Or Update LogAnalyticsWorkspace'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    resourceGroupName: '$(paramResourceGroupName)'
+    location: '$(paramResourceGroupLocation)'
+    ${{ if eq(parameters.paramDeploymentMode,'Validation') }}:
+      csmFile:  'MDMF/Deployment/ARMTemplates/ServicesDeployment/LogAnalyticsWorkspace.json'
+      csmParametersFile: 'MDMF/Deployment/ARMTemplates/ServicesDeployment/LogAnalyticsWorkspace.param.dev.json'
+    ${{ if eq(parameters.paramDeploymentMode,'Incremental') }}:
+      csmFile:  '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/LogAnalyticsWorkspace.json'
+      csmParametersFile: '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/LogAnalyticsWorkspace.param.dev.json'
+    overrideParameters: '
+        -workspaceName "$(paramWorkspaceName)" 
+        -sku "$(paramWorkspaceSku)" 
+        -location "$(paramWorkspaceLocation)"
+        -retentionInDays "$(paramWorkspaceRetentionInDays)" 
+        -resourcePermissions "true"'
+    deploymentMode: ${{ parameters.paramDeploymentMode }}
+  enabled: ${{ parameters.paramEnabled }}
+  condition: succeededOrFailed()
+

@@ -1,0 +1,11 @@
+# Template to declare the variables for the deployment templates
+variables:
+#------Sorage Account------
+- name: paramStorageAccountName
+  value: default
+- name: paramStorageTier
+  value: Standard
+- name: paramStorageAccountLocation
+  value: South Central US
+- name: paramStorageType
+  value: Standard_RAGRS

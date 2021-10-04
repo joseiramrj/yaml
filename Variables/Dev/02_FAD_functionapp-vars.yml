@@ -1,0 +1,13 @@
+# Template to declare the variables for the deployment templates
+variables:
+#------Function App------
+- name: paramfunctionAppName
+  value: default
+- name: paramdatafunctionApplocation
+  value: South Central US
+- name: paramhostingPlanName
+  value: default
+- name: paramserverFarmResourceGroup
+  value: default
+- name: paramfunctionAppStorageAccountName
+  value: default

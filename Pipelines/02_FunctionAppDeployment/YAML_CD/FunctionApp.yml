@@ -1,0 +1,47 @@
+# Template to deploy FunctionApp
+parameters:
+- name: paramDeploymentMode  
+  displayName: 'Mode? Validation/Incremental'
+  type: string
+  default: Incremental
+- name: paramEnabled 
+  displayName: 'Enabled? true/false'  
+  type: boolean
+  default: true
+
+steps:
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment:Create Or Update FunctionApp'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    resourceGroupName: '$(paramResourceGroupName)'
+    location: '$(paramResourceGroupLocation)'
+    ${{ if eq(parameters.paramDeploymentMode,'Validation') }}:
+      csmFile:  'MDMF/Deployment/ARMTemplates/ServicesDeployment/FunctionApp.json'
+      csmParametersFile: 'MDMF/Deployment/ARMTemplates/ServicesDeployment/FunctionApp.param.json'
+    ${{ if eq(parameters.paramDeploymentMode,'Incremental') }}:
+      csmFile:  '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/FunctionApp.json'
+      csmParametersFile: '$(Pipeline.Workspace)\s\MDMF/Deployment/ARMTemplates/ServicesDeployment/FunctionApp.param.json'
+    overrideParameters: '
+        -functionAppName "$(paramfunctionAppName)" 
+        -functionApplocation "$(paramdatafunctionApplocation)"
+        -hostingPlanName "$(paramhostingPlanName)"
+        -serverFarmResourceGroup "$(paramserverFarmResourceGroup)"
+        -storageAccountName "$(paramfunctionAppStorageAccountName)"
+        -subscriptionId "$(paramSubscriptionId)"'
+    deploymentMode: ${{ parameters.paramDeploymentMode }}
+  enabled: ${{ parameters.paramEnabled }}
+  condition: succeededOrFailed()
+
+- task: AzureCLI@2
+  displayName: 'Azure CLI to deploy FunctionApp'
+  inputs:
+    azureSubscription: 'yamlconnection'
+    scriptType: ps
+    scriptLocation: inlineScript
+    inlineScript: |
+      az functionapp deployment source config-zip --resource-group '$(paramResourceGroupName)' --name '$(paramfunctionAppName)' --src '$(Pipeline.Workspace)\s\MDMF/Deployment/YAML/Pipelines/02_FunctionAppDeployment/ZipDeployment/AzureFunctionPublishProfile.zip'
+    deploymentMode: ${{ parameters.paramDeploymentMode }}
+  enabled: ${{ parameters.paramEnabled }}
+  condition: succeededOrFailed()

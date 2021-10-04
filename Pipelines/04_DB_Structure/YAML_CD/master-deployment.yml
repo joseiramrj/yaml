@@ -1,0 +1,6 @@
+# Master file for stage deployment
+steps:
+# Azure SQL Server and Database
+- template: Azure-Sql.yml
+  parameters:
+    paramEnabled: true

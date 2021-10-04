@@ -1,0 +1,34 @@
+# validation
+parameters:
+  name: validationEnabled 
+  type: boolean
+
+steps:
+- template: /MDMF/Deployment/YAML/Pipelines/01_ServicesDeployment/YAML_CD/StorageAccount.yml
+  parameters:
+    paramDeploymentMode: Validation
+    paramEnabled: ${{ parameters.validationEnabled }}
+
+#Azure SQLServer
+- template: /MDMF/Deployment/YAML/Pipelines/01_ServicesDeployment/YAML_CD/Azure-Sql.yml
+  parameters:
+    paramDeploymentMode: Validation
+    paramEnabled: ${{ parameters.validationEnabled }}
+
+# Azure KeyVault
+- template: /MDMF/Deployment/YAML/Pipelines/01_ServicesDeployment/YAML_CD/AzureKeyVault.yml
+  parameters:
+    paramDeploymentMode: Validation
+    paramEnabled: ${{ parameters.validationEnabled }}
+
+# Notification Action Group
+- template: /MDMF/Deployment/YAML/Pipelines/01_ServicesDeployment/YAML_CD/NotificationActionGroup.yml
+  parameters:
+    paramDeploymentMode: Validation
+    paramEnabled: ${{ parameters.validationEnabled }}
+
+# Log Analytics Workspace
+- template: /MDMF/Deployment/YAML/Pipelines/01_ServicesDeployment/YAML_CD/LogAnalyticsWorkspace.yml
+  parameters:
+    paramDeploymentMode: Validation
+    paramEnabled: ${{ parameters.validationEnabled }}

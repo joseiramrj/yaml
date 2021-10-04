@@ -1,0 +1,9 @@
+# validation
+parameters:
+  name: validationEnabled 
+  type: boolean
+
+steps:
+- template: /MDMF/Deployment/YAML/Pipelines/02_FunctionAppDeployment/YAML_CD/FunctionApp.yml
+  parameters:
+    paramEnabled: ${{ parameters.validationEnabled }}

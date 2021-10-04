@@ -1,0 +1,35 @@
+#Master variables' file for Dev enviroment
+variables:
+- name: paramResourceGroupName
+  value: default
+- name: paramResourceGroupLocation
+  value: South Central US
+- name: paramDiagnosticsRetention
+  value: P90D
+- name: paramDeploymentVersion
+  value: 6.0.0
+- name: paramDeploymentType
+  value: Platform
+- name: paramSubscriptionId
+  value: default
+- name: paramTenantId
+  value: default
+- name: paramEnterpriseAppObjectId
+  value: default
+- name: paramSkuVersion
+  value: S1
+- name: paramPublisherEmail
+  value: default
+
+# Deployments Variables template:
+  #Pipeline 1
+- template: 01_SI_KeyVault-vars.yml
+- template: 01_SI_ADF_Alerts-vars.yml
+- template: 01_SI_StorageAccount-vars.yml
+- template: 01_SI_StorageAccountATS-vars.yml
+- template: 01_SI_StorageAccountADLS-vars.yml
+- template: 01_SI_sql-vars.yml
+ #Pipeline 2
+- template: 02_FAD_functionapp-vars.yml
+ #Pipeline 3
+- template: 03_ADF_datafactory-vars.yml

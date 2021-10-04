@@ -1,0 +1,11 @@
+# validation
+parameters:
+  name: validationEnabled 
+  type: boolean
+
+steps:
+#Azure SQLServer
+- template: /MDMF/Deployment/YAML/Pipelines/04_DB_Structure/YAML_CD/Azure-Sql.yml
+  parameters:
+    #paramDeploymentMode: Validation
+    paramEnabled: ${{ parameters.validationEnabled }}

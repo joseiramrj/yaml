@@ -1,0 +1,53 @@
+# template to run the build of the platform solution
+parameters:
+- name: buildEnabled
+  type: boolean
+  default: true
+
+steps:
+- task: NuGetToolInstaller@1
+  inputs:
+    versionSpec: '4.7.1'
+    deploymentMode: Incremental
+  enabled: ${{ parameters.buildEnabled }}
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreDirectory: '$(Build.SourcesDirectory)\Source\AMAP\packages'
+    deploymentMode: Incremental
+  enabled: ${{ parameters.buildEnabled }}
+
+- task: VSBuild@1
+  displayName: 'Build solution **/*.sln'
+  inputs:
+    solution: '**/*.sln'
+    vsVersion: "16.0"
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(Build.ArtifactStagingDirectory)\output.zip"  /p:DeployIisAppPath="Default Web Site" /p:PackageLocation="$(build.StagingDirectory)" /p:CompilerTaskAssemblyFile="Microsoft.WindowsAzure.StreamAnalytics.Common.CompileService.dll"  /p:ASATargetsFilePath="$(Build.SourcesDirectory)\ADAPT\packages\Microsoft.Azure.StreamAnalytics.CICD.1.0.0\build\StreamAnalytics.targets" /p:USQLSDKPath="$(Build.SourcesDirectory)\ADAPT\packages\Microsoft.Azure.DataLake.USQL.SDK.1.3.180615\build\runtime"'
+    platform: 'any cpu'
+    configuration: release
+    maximumCpuCount: true
+    msbuildArchitecture: x64
+    createLogFile: true
+    logFileVerbosity: diagnostic
+    deploymentMode: Incremental
+  enabled: ${{ parameters.buildEnabled }}
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '**\*'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    CleanTargetFolder: true
+    OverWrite: true
+    deploymentMode: Incremental
+  enabled: ${{ parameters.buildEnabled }}
+  
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  enabled: ${{ parameters.buildEnabled }}
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: drop
+

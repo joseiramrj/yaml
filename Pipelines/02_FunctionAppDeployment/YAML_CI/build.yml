@@ -1,0 +1,24 @@
+# template to run the build of the platform solution
+parameters:
+- name: buildEnabled
+  type: boolean
+  default: true
+
+steps:
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '**\*'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    CleanTargetFolder: true
+    OverWrite: true
+    deploymentMode: Incremental
+  enabled: ${{ parameters.buildEnabled }}
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  enabled: ${{ parameters.buildEnabled }}
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: drop

@@ -1,0 +1,33 @@
+# Stage for the Continuos Integration stage, to validate templates and build solution
+parameters:
+  - name: validationEnabled
+    type: boolean
+  - name: buildEnabled
+    type: boolean
+  - name: agentPoolName
+    type: string
+
+stages:
+- stage: Build_stage
+  displayName: Build_stage
+  variables:
+  - template: ../../../YAML/Variables/Dev/variables-master.yml
+
+  jobs:
+  - job: ValidationAndBuild
+    displayName: Validation and Build
+    pool:
+      name: ${{ parameters.agentPoolName }}
+      vmImage: 'windows-latest'
+      demands:
+      - msbuild
+      - visualstudio
+      - vstest
+
+    steps: 
+    - template: 'YAML_CI/validation.yml'
+      parameters:
+        validationEnabled: ${{ parameters.validationEnabled }}
+    - template: 'YAML_CI/build.yml'
+      parameters:
+        buildEnabled: ${{ parameters.buildEnabled }}
